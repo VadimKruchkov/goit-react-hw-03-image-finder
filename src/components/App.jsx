@@ -8,10 +8,6 @@ import ImageGalleryItem from './ImageGalleryItem';
 
 import { getImages, PER_PAGE } from '../services/api';
 
-//idle
-//pending
-//success
-//resolved
 export class App extends Component {
   state = {
     page: 1,
@@ -23,16 +19,13 @@ export class App extends Component {
   async componentDidUpdate(_, prevState) {
     const { page, query } = this.state;
 
-    // console.log('prevState.page', prevState.page);
-    // console.log('this.state.page', page);
-
     if (page !== prevState.page || query !== prevState.query) {
       try {
         this.setState({ status: 'pending' });
 
         const data = await getImages(query, page);
         const newImages = await data.hits;
-        // console.log(newImages);
+
         if (newImages.length === 0) {
           return Notiflix.Notify.warning('Please, enter new search!');
         }
@@ -41,7 +34,7 @@ export class App extends Component {
           this.setState({ isLoadMore: false });
           Notiflix.Notify.info('The end');
         }
-        // console.log(data.total);
+
         this.setState(({ images }) => ({
           images: [...images, ...newImages],
           status: 'success',
@@ -56,7 +49,7 @@ export class App extends Component {
 
   isThereImagesOnPage(total, page) {
     const totalPages = Math.floor(total / PER_PAGE);
-    // console.log(totalPages);
+
     return page < totalPages;
   }
 
