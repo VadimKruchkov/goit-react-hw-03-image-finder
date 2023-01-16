@@ -1,1 +1,1 @@
-export { defoult } from './ImageGalleryItem';
+export { default } from './ImageGalleryItem';

@@ -1,43 +1,50 @@
-import React, { Component } from 'react';
-import { Formik, Form, Field } from 'formik';
+import { Formik, ErrorMessage } from 'formik';
+import { SearchbarForm, SearchForm, SearchInput } from './Searchbar.styled';
+import { FcSearch } from 'react-icons/fc';
+
 import PropTypes from 'prop-types';
+import Notiflix from 'notiflix';
 
 const initialValues = {
   query: '',
 };
-class Searchbar extends Component {
-  state = {
-    query: '',
+const Searchbar = ({ onSearch }) => {
+  const handleSubmit = (values, actions) => {
+    const { query } = values;
+    if (query.trim() === '') {
+      return Notiflix.Notify.warning('Please, enter some words');
+    }
+    // console.log(query);
+    onSearch(query);
+    actions.resetForm();
   };
-  handleSubmit = (values, { resetForm }) => {
-    this.props.onSubmit(values['query']);
-    resetForm();
-  };
-  render() {
-    return (
-      <header className="Searchbar">
-        <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
-          <Form className="SearchForm">
-            <button type="submit" className="SearchFormButton">
-              <span className="SearchFormButtonLabel">Search</span>
-            </button>
-            <Field
-              className="SearchFormInput"
-              type="text"
-              autoComplete="off"
-              autoFocus
-              name="query"
-              placeholder="Search images and photos"
-            />
-          </Form>
-        </Formik>
-      </header>
-    );
-  }
-}
+
+  return (
+    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+      <SearchbarForm>
+        <SearchForm>
+          <button type="submit">
+            <span>Search </span>
+            <FcSearch size={20} />
+          </button>
+          <SearchInput
+            type="text"
+            name="query"
+            autoComplete="off"
+            autoFocus
+            placeholder="Search images and photos"
+          />
+          <ErrorMessage name="query" component="div" />
+        </SearchForm>
+      </SearchbarForm>
+    </Formik>
+  );
+};
 
 export default Searchbar;
 
 Searchbar.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
+  query: PropTypes.string,
+  onSearch: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func,
 };

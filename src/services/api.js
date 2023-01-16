@@ -1,33 +1,26 @@
 import axios from 'axios';
-const URL = 'https://pixabay.com/api/';
-const PIXABAY_API_KEY = '31328328-71f796aed52050f73442a22c1';
+
+const URL = 'https://pixabay.com/api/?';
+const PIXABAY_KEY = '31212742-df383ab72ff5d16a82f89e026';
 const IMAGE_TYPE = 'photo';
-const ORIENTATION = 'horizontal';
 const SAFESEARCH = 'true';
+const ORDER = 'latest';
+
 export const PER_PAGE = 12;
 
-// axios.defaults.baseURL = 'https://pixabay.com/api/';
+export const getImages = async (query, page) => {
+  const params = new URLSearchParams({
+    key: PIXABAY_KEY,
+    image_type: IMAGE_TYPE,
+    safesearch: SAFESEARCH,
+    order: ORDER,
 
-export const searchImage = async (query, page) => {
-  try {
-    const searchParams = new URLSearchParams({
-      key: PIXABAY_API_KEY,
-      image_type: IMAGE_TYPE,
-      orientation: ORIENTATION,
-      safesearch: SAFESEARCH,
-      per_page: PER_PAGE,
-      page: page,
-      q: query,
-    });
+    per_page: PER_PAGE,
+    q: query,
+    page: page,
+  });
 
-    const url = `${URL}?${searchParams}`;
-    const response = await axios.get(url);
-    if (!response.status) {
-      throw new Error('Something goes wrong');
-    }
+  const response = await axios.get(`${URL}${params}`);
 
-    return response.data;
-  } catch (error) {
-    console.log(error.message);
-  }
+  return response.data;
 };

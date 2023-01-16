@@ -1,45 +1,54 @@
+import Modal from 'components/Modal';
+import React, { Component } from 'react';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { GalleryItem, GalleryItemImg } from './ImageGalleryItem.styled';
+
 import PropTypes from 'prop-types';
-import { useState } from 'react';
-import { useToggle } from '../hooks/useToggle';
-import Modal from 'components/Modal/Modal';
 
-export default function ImageGalleryItem({ images }) {
-  const [bigUrl, setBigUrl] = useState('');
-  const [tag, setTag] = useState('');
-  const { isOpen, toggleModal } = useToggle();
-
-  const getImage = e => {
-    setBigUrl(e.target.dataset.largeimg);
-    setTag(e.target.alt);
-    toggleModal();
+export default class ImageGalleryItem extends Component {
+  state = {
+    showModal: false,
   };
 
-  return (
-    <>
-      {images.map(image => (
-        <li className="ImageGalleryItem" key={image.id}>
-          <img
-            src={image.webformatURL}
-            data-largeimg={image.largeImageURL}
-            alt={image.tags}
-            className="ImageGalleryItemImage"
-            onClick={getImage}
-            loading="lazy"
-          />
-        </li>
-      ))}
-      {isOpen && <Modal src={bigUrl} alt={tag} toggleModal={toggleModal} />}
-    </>
-  );
-}
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
+    console.log(this.state.showModal);
+  };
 
+  render() {
+    const { image } = this.props;
+    const { id, webformatURL, tags, largeImageURL } = image;
+    const { showModal } = this.state;
+    return (
+      <>
+        <GalleryItem key={id}>
+          <GalleryItemImg
+            src={webformatURL}
+            alt={tags}
+            loading="lazy"
+            onClick={this.toggleModal}
+          />
+        </GalleryItem>
+
+        {showModal && (
+          <Modal onClose={this.toggleModal}>
+            <LazyLoadImage src={largeImageURL} alt={tags} />
+          </Modal>
+        )}
+      </>
+    );
+  }
+}
 ImageGalleryItem.propTypes = {
-  images: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      webformatURL: PropTypes.string.isRequired,
-      largeImageURL: PropTypes.string.isRequired,
-      tags: PropTypes.string.isRequired,
-    })
-  ),
+  showModal: PropTypes.bool,
+  image: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    largeImageURL: PropTypes.string.isRequired,
+    webformatURL: PropTypes.string.isRequired,
+    tags: PropTypes.string.isRequired,
+  }),
+  toggleModal: PropTypes.func,
+  onClose: PropTypes.func,
 };

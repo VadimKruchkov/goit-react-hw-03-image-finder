@@ -1,39 +1,46 @@
-import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { createPortal } from 'react-dom';
-import { useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { Overlay, ModalContainer } from './Modal.styled';
 
 const modalRoot = document.querySelector('#modal-root');
 
-export default function Modal({ alt, src, toggleModal }) {
-  useEffect(() => {
-    const handlerEscape = e => {
-      if (e.code === 'Escape') {
-        toggleModal();
-      }
-    };
-    window.removeEventListener('keydown', handlerEscape);
-    return () => {
-      window.removeEventListener('keydown', handlerEscape);
-    };
-  }, [toggleModal]);
+export default class Modal extends Component {
+  componentDidMount() {
+    window.addEventListener('keydown', this.handleEscClose);
+  }
 
-  const handleBackdropClick = e => {
-    if (e.currentTarget === e.target) {
-      toggleModal();
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleEscClose);
+  }
+
+  handleEscClose = evt => {
+    if (evt.code === 'Escape') {
+      this.props.onClose();
     }
   };
 
-  return createPortal(
-    <div className="Overlay" onClick={handleBackdropClick}>
-      <div className="Modal">
-        <img src={src} alt={alt} />
-      </div>
-    </div>,
-    modalRoot
-  );
-}
+  handleOverlayClose = evt => {
+    if (evt.currentTarget === evt.target) {
+      this.props.onClose();
+    }
+  };
 
+  render() {
+    // console.log(this.props.children);
+    return createPortal(
+      <Overlay onClick={this.handleOverlayClose}>
+        <ModalContainer>
+          {this.props.children}
+          {/* <LazyLoadImage src={src} alt={alt} /> */}
+        </ModalContainer>
+      </Overlay>,
+      modalRoot
+    );
+  }
+}
 Modal.propTypes = {
-  alt: PropTypes.string.isRequired,
-  src: PropTypes.string.isRequired,
+  handleOverlayClose: PropTypes.func,
+  onClick: PropTypes.func,
+  onClose: PropTypes.func.isRequired,
 };

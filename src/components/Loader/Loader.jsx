@@ -1,19 +1,25 @@
-import { MutatingDots } from 'react-loader-spinner';
 import React from 'react';
+import { ThreeCircles } from 'react-loader-spinner';
+import { LoaderContainer } from './Loader.styled';
 
 const Loader = () => {
   return (
-    <MutatingDots
-      height="100"
-      width="100"
-      color="#5667ff"
-      secondaryColor="#5667ff"
-      radius="12"
-      ariaLabel="mutating-dots-loading"
-      wrapperStyle={{}}
-      wrapperClass="Loader"
-      visible={true}
-    />
+    <LoaderContainer>
+      <div>
+        <ThreeCircles
+          height="100"
+          width="100"
+          color="#3541fb"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+          ariaLabel="three-circles-rotating"
+          outerCircleColor=""
+          innerCircleColor=""
+          middleCircleColor=""
+        />
+      </div>
+    </LoaderContainer>
   );
 };
 
